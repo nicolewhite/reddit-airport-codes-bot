@@ -7,8 +7,8 @@ import time
 POST_LIMIT = 15
 
 SUBREDDITS = [
-    "aviation",
-    "Planespotting",
+    # "aviation",
+    # "Planespotting",
     "AirlineSpecialLivery",
 ]
 
@@ -19,6 +19,10 @@ COMMON_ACRONYMS_TO_IGNORE = [
     "RAF",
     # Trans-Canada Air Lines; conflicts with Tennant Creek Airport (TCA)
     "TCA",
+    # Pan American; conflicts with Pattani Airport (PAN)
+    "PAN",
+    # Type of military plane; conflicts with M'Boki Airport (MKI)
+    "MKI",
 ]
 
 with open("airports.json") as f:
