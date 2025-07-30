@@ -95,7 +95,7 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
         print("COMMENT BODY:")
         print(comment_body)
         print()
-        # submission.reply(comment_body)
+        submission.reply(comment_body)
 
         logs[submission.id] = {
             "subreddit": subreddit.display_name,
