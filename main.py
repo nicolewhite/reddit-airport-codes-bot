@@ -8,6 +8,8 @@ POST_LIMIT = 15
 
 SUBREDDITS = [
     "aviation",
+    "Planespotting",
+    "AirlineSpecialLivery",
 ]
 
 COMMON_ACRONYMS_TO_IGNORE = [
@@ -115,6 +117,7 @@ def run() -> None:
 
     for subreddit_name in SUBREDDITS:
         process_subreddit(reddit, subreddit_name)
+        time.sleep(2)
 
 
 if __name__ == "__main__":
