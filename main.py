@@ -24,6 +24,9 @@ COMMON_ACRONYMS_TO_IGNORE = [
 with open("airports.json") as f:
     airports = json.load(f)
 
+with open("countries.json") as f:
+    countries = json.load(f)
+
 with open("logs.json") as f:
     logs = json.load(f)
 
@@ -60,7 +63,9 @@ def make_comment_body(icao_codes: set[str]) -> str:
 
         city = airport["city"]
         state = airport["state"]
-        country = airport["country"]
+        country_code = airport["country"]
+
+        country = countries.get(country_code, country_code)
 
         location = ", ".join(x for x in [city, state, country] if x)
 
@@ -101,7 +106,7 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
             "subreddit": subreddit.display_name,
             "title": submission.title,
             "created_at": submission.created_utc,
-            "url": submission.permalink,
+            "url": f"https://reddit.com{submission.permalink}",
             "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
         }
 
