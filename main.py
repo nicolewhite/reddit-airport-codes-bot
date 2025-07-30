@@ -23,7 +23,8 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
             mentioned.add(key)
             continue
 
-        for code in (airport["icao"], airport["iata"]):
+        codes = [c for c in [airport["icao"], airport["iata"]] if c]
+        for code in codes:
             if text.startswith(f"{code} ") or text.endswith(f" {code}") or f" {code} " in text:
                 mentioned.add(key)
                 break
