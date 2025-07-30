@@ -5,8 +5,16 @@ import re
 import time
 
 POST_LIMIT = 15
+
 SUBREDDITS = [
     "aviation",
+]
+
+COMMON_ACRONYMS_TO_IGNORE = [
+    # Instrument Landing System; conflicts with Ilopango International Airport (MSSS)
+    "ILS",
+    # Royal Air Force; conflicts with Rafaela Airport (SFAR)
+    "RAF",
 ]
 
 with open("airports.json") as f:
@@ -20,7 +28,10 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
     mentioned = set()
 
     for key, airport in airports.items():
-        codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c]
+        codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c and c not in COMMON_ACRONYMS_TO_IGNORE]
+        if not codes_to_check:
+            continue
+
         codes_regex = "|".join(codes_to_check)
         pattern = fr'(^|\W+)({codes_regex})(\W+|$)'
 
