@@ -25,14 +25,14 @@ COMMON_ACRONYMS_TO_IGNORE = [
     "MKI",
 ]
 
-with open("airports.json") as f:
+with open("data/airports.json") as f:
     airports = json.load(f)
 
-with open("countries.json") as f:
+with open("data/countries.json") as f:
     countries = json.load(f)
 
-with open("logs.json") as f:
-    logs = json.load(f)
+with open("data/comments.json") as f:
+    comments = json.load(f)
 
 
 def find_mentioned_icao_codes(text: str) -> set[str]:
@@ -84,12 +84,12 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
     subreddit = reddit.subreddit(subreddit_name)
 
     for submission in subreddit.new(limit=POST_LIMIT):
-        if submission.id in logs:
+        if submission.id in comments:
             continue
 
-        print("ID:", submission.id)
-        print("Title:", submission.title)
-        print("Created:", submission.created_utc)
+        print("Submission ID:", submission.id)
+        print("Submission Title:", submission.title)
+        print("Submission Created:", submission.created_utc)
 
         mentioned_icao_codes = find_mentioned_icao_codes("\n".join([
             submission.title,
@@ -101,12 +101,12 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
             continue
 
         comment_body = make_comment_body(mentioned_icao_codes)
-        print("COMMENT BODY:")
+        print("POSTING COMMENT BODY:")
         print(comment_body)
         print()
-        submission.reply(comment_body)
+        # submission.reply(comment_body)
 
-        logs[submission.id] = {
+        comments[submission.id] = {
             "subreddit": subreddit.display_name,
             "title": submission.title,
             "created_at": submission.created_utc,
@@ -114,7 +114,7 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
             "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
         }
 
-        time.sleep(2)
+        # time.sleep(5)
 
 
 def run() -> None:
@@ -124,16 +124,17 @@ def run() -> None:
         username=os.environ["REDDIT_BOT_USERNAME"],
         password=os.environ["REDDIT_BOT_PASSWORD"],
         user_agent=f"{os.environ["REDDIT_BOT_USERNAME"]}/1.0",
+        ratelimit_seconds=30,
     )
 
     for subreddit_name in SUBREDDITS:
         process_subreddit(reddit, subreddit_name)
-        time.sleep(2)
+        # time.sleep(2)
 
 
 if __name__ == "__main__":
     try:
         run()
     finally:
-        with open("logs.json", "w") as f:
-            json.dump(logs, f, indent=4)
+        with open("data/comments.json", "w") as f:
+            json.dump(comments, f, indent=4)
