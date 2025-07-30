@@ -6,5 +6,13 @@
         "mentioned_icao_codes": [
             "SAFR"
         ]
+    },
+    "1mcxiid": {
+        "subreddit": "aviation",
+        "title": "A pair of 767s, a retro livery, and the SpaceX 737 at LAX",
+        "created_at": 1753850758.0,
+        "mentioned_icao_codes": [
+            "KLAX"
+        ]
     }
 }
