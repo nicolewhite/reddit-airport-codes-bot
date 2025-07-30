@@ -13,10 +13,12 @@ SUBREDDITS = [
 ]
 
 COMMON_ACRONYMS_TO_IGNORE = [
-    # Instrument Landing System; conflicts with Ilopango International Airport (MSSS)
+    # Instrument Landing System; conflicts with Ilopango International Airport (ILS)
     "ILS",
-    # Royal Air Force; conflicts with Rafaela Airport (SFAR)
+    # Royal Air Force; conflicts with Rafaela Airport (RAF)
     "RAF",
+    # Trans-Canada Air Lines; conflicts with Tennant Creek Airport (TCA)
+    "TCA",
 ]
 
 with open("airports.json") as f:
