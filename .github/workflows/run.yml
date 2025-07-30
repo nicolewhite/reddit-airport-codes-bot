@@ -28,3 +28,4 @@ jobs:
             git commit -m "Update logs.json"
             git push
           fi
+        if: always()
