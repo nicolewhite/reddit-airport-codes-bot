@@ -21,12 +21,11 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
 
     for key, airport in airports.items():
         codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c]
-
-        for code in codes_to_check:
-            pattern = fr'(^|\W+)({code})(\W+|$)'
-            if re.search(pattern, text, re.MULTILINE):
-                mentioned.add(key)
-                break
+        codes_regex = "|".join(codes_to_check)
+        pattern = fr'(^|\W+)({codes_regex})(\W+|$)'
+        
+        if re.search(pattern, text, re.MULTILINE):
+            mentioned.add(key)
 
     return mentioned
 
