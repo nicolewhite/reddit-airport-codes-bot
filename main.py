@@ -101,7 +101,7 @@ def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
             "subreddit": subreddit.display_name,
             "title": submission.title,
             "created_at": submission.created_utc,
-            "url": submission.url,
+            "url": submission.permalink,
             "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
         }
 
