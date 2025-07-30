@@ -60,6 +60,7 @@ def run() -> None:
         client_secret=os.environ["REDDIT_BOT_CLIENT_SECRET"],
         username=os.environ["REDDIT_BOT_USERNAME"],
         password=os.environ["REDDIT_BOT_PASSWORD"],
+        user_agent=f"{os.environ["REDDIT_BOT_USERNAME"]}/1.0",
     )
 
     try:
