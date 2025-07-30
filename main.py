@@ -20,10 +20,6 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
     mentioned = set()
 
     for key, airport in airports.items():
-        if airport["name"] in text:
-            mentioned.add(key)
-            continue
-
         codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c]
 
         for code in codes_to_check:
@@ -82,10 +78,10 @@ def run() -> None:
                 print("Title", submission.title)
                 print("Created", submission.created_utc)
 
-                mentioned_icao_codes = set().union(*[
-                    find_mentioned_icao_codes(submission.title),
-                    find_mentioned_icao_codes(submission.selftext),
-                ])
+                mentioned_icao_codes = find_mentioned_icao_codes("\n".join([
+                    submission.title,
+                    submission.selftext,
+                ]))
 
                 if not mentioned_icao_codes:
                     print("No airports mentioned in submission")
