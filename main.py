@@ -56,6 +56,42 @@ def make_comment_body(icao_codes: set[str]) -> str:
     return table
 
 
+def process_subreddit(reddit: praw.Reddit, subreddit_name: str) -> None:
+    subreddit = reddit.subreddit(subreddit_name)
+
+    for submission in subreddit.new(limit=POST_LIMIT):
+        if submission.id in logs:
+            continue
+
+        print("ID:", submission.id)
+        print("Title:", submission.title)
+        print("Created:", submission.created_utc)
+
+        mentioned_icao_codes = find_mentioned_icao_codes("\n".join([
+            submission.title,
+            submission.selftext,
+        ]))
+
+        if not mentioned_icao_codes:
+            print("No airports mentioned in submission")
+            continue
+
+        comment_body = make_comment_body(mentioned_icao_codes)
+        print("COMMENT BODY:")
+        print(comment_body)
+        print()
+        # submission.reply(comment_body)
+
+        logs[submission.id] = {
+            "subreddit": subreddit.display_name,
+            "title": submission.title,
+            "created_at": submission.created_utc,
+            "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
+        }
+
+        time.sleep(2)
+
+
 def run() -> None:
     reddit = praw.Reddit(
         client_id=os.environ["REDDIT_BOT_CLIENT_ID"],
@@ -65,45 +101,13 @@ def run() -> None:
         user_agent=f"{os.environ["REDDIT_BOT_USERNAME"]}/1.0",
     )
 
-    try:
-        for subreddit_name in SUBREDDITS:
-            subreddit = reddit.subreddit(subreddit_name)
-
-            for submission in subreddit.new(limit=POST_LIMIT):
-                if submission.id in logs:
-                    continue
-
-                print("ID", submission.id)
-                print("Title", submission.title)
-                print("Created", submission.created_utc)
-
-                mentioned_icao_codes = find_mentioned_icao_codes("\n".join([
-                    submission.title,
-                    submission.selftext,
-                ]))
-
-                if not mentioned_icao_codes:
-                    print("No airports mentioned in submission")
-                    continue
-
-                comment_body = make_comment_body(mentioned_icao_codes)
-                print("COMMENT BODY:")
-                print(comment_body)
-                print()
-                # submission.reply(comment_body)
-
-                logs[submission.id] = {
-                    "subreddit": subreddit_name,
-                    "title": submission.title,
-                    "created_at": submission.created_utc,
-                    "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
-                }
-
-                time.sleep(2)
-    finally:
-        with open("logs.json", "w") as f:
-            json.dump(logs, f, indent=4)
+    for subreddit_name in SUBREDDITS:
+        process_subreddit(reddit, subreddit_name)
 
 
 if __name__ == "__main__":
-    run()
+    try:
+        run()
+    finally:
+        with open("logs.json", "w") as f:
+            json.dump(logs, f, indent=4)
