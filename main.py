@@ -1,6 +1,7 @@
 import json
 import os
 import praw
+import re
 import time
 
 POST_LIMIT = 15
@@ -23,9 +24,11 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
             mentioned.add(key)
             continue
 
-        codes = [c for c in [airport["icao"], airport["iata"]] if c]
-        for code in codes:
-            if text.startswith(f"{code} ") or text.endswith(f" {code}") or f" {code} " in text:
+        codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c]
+
+        for code in codes_to_check:
+            pattern = fr'(^|\W+)({code})(\W+|$)'
+            if re.search(pattern, text, re.MULTILINE):
                 mentioned.add(key)
                 break
 
@@ -98,7 +101,7 @@ def run() -> None:
                     "subreddit": subreddit_name,
                     "title": submission.title,
                     "created_at": submission.created_utc,
-                    "mentioned_icao_codes": mentioned_icao_codes,
+                    "mentioned_icao_codes": list(sorted(mentioned_icao_codes)),
                 }
 
                 time.sleep(2)
