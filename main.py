@@ -70,9 +70,14 @@ def run() -> None:
                 if submission.id in logs:
                     continue
 
+                print("ID", submission.id)
+                print("Title", submission.title)
+                print("Created", submission.created_utc)
+
                 mentioned_airports = find_mentioned_airports(submission.title + submission.selftext)
 
                 if not mentioned_airports:
+                    print("No airports mentioned in submission")
                     continue
 
                 comment_body = make_comment_body(mentioned_airports)
@@ -87,7 +92,7 @@ def run() -> None:
                     "created_at": submission.created_utc,
                     "mentioned_icao_codes": [a["icao"] for a in mentioned_airports],
                 }
-                
+
                 time.sleep(2)
     finally:
         with open("logs.json", "w") as f:
