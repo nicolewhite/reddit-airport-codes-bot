@@ -19,13 +19,13 @@ jobs:
           REDDIT_BOT_USERNAME: ${{ secrets.REDDIT_BOT_USERNAME }}
           REDDIT_BOT_PASSWORD: ${{ secrets.REDDIT_BOT_PASSWORD }}
       - run: |
-          if git diff --exit-code logs.json; then
-            echo "Logs did not change"
+          if git diff --exit-code data/comments.json; then
+            echo "Comment logs did not change"
           else
             git config user.name 'github'
             git config user.email 'github@users.noreply.github.com'
-            git add logs.json
-            git commit -m "Update logs.json"
+            git add data/comments.json
+            git commit -m "Update data/comments.json"
             git push
           fi
         if: always()
