@@ -23,7 +23,7 @@ def find_mentioned_icao_codes(text: str) -> set[str]:
         codes_to_check = [c for c in [airport["icao"], airport["iata"]] if c]
         codes_regex = "|".join(codes_to_check)
         pattern = fr'(^|\W+)({codes_regex})(\W+|$)'
-        
+
         if re.search(pattern, text, re.MULTILINE):
             mentioned.add(key)
 
@@ -47,7 +47,7 @@ def make_comment_body(icao_codes: set[str]) -> str:
         state = airport["state"]
         country = airport["country"]
 
-        location = ",".join(x for x in [city, state, country] if x)
+        location = ", ".join(x for x in [city, state, country] if x)
 
         table += f"\n|{iata}|{icao}|{name_col}|{location}|"
 
