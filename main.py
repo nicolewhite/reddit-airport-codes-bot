@@ -62,9 +62,6 @@ def make_comment_body(icao_codes: set[str]) -> str:
         icao = airport["icao"]
         iata = airport["iata"]
 
-        flightradar = f"https://www.flightradar24.com/airport/{icao.lower()}"
-        name_col = f"[{name}]({flightradar})"
-
         city = airport["city"]
         state = airport["state"]
         country_code = airport["country"]
@@ -73,7 +70,7 @@ def make_comment_body(icao_codes: set[str]) -> str:
 
         location = ", ".join(x for x in [city, state, country] if x)
 
-        table += f"\n|{iata}|{icao}|{name_col}|{location}|"
+        table += f"\n|{iata}|{icao}|{name}|{location}|"
 
     table += "\n\n*I am a bot.*"
 
