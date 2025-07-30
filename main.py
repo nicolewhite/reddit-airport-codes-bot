@@ -97,3 +97,7 @@ def run() -> None:
     finally:
         with open("logs.json", "w") as f:
             json.dump(logs, f, indent=4)
+
+
+if __name__ == "__main__":
+    run()
