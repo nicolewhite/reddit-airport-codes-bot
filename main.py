@@ -15,25 +15,28 @@ with open("logs.json") as f:
     logs = json.load(f)
 
 
-def find_mentioned_airports(text: str) -> list[dict]:
-    mentioned = []
+def find_mentioned_icao_codes(text: str) -> set[str]:
+    mentioned = set()
 
-    for airport in airports.values():
-        identifiers = [
-            airport["name"],
-            airport["icao"],
-            airport["iata"],
-        ]
-        if any(identifier in text for identifier in identifiers if identifier):
-            mentioned.append(airport)
+    for key, airport in airports.items():
+        if airport["name"] in text:
+            mentioned.add(key)
+            continue
+
+        for code in (airport["icao"], airport["iata"]):
+            if text.startswith(f"{code} ") or text.endswith(f" {code}") or f" {code} " in text:
+                mentioned.add(key)
+                break
 
     return mentioned
 
 
-def make_comment_body(airports: list[dict]) -> str:
+def make_comment_body(icao_codes: set[str]) -> str:
     table = "|IATA|ICAO|Name|Location|\n|:-|:-|:-|:-|"
 
-    for airport in airports:
+    for code in sorted(icao_codes):
+        airport = airports[code]
+
         name = airport["name"]
         icao = airport["icao"]
         iata = airport["iata"]
@@ -75,13 +78,16 @@ def run() -> None:
                 print("Title", submission.title)
                 print("Created", submission.created_utc)
 
-                mentioned_airports = find_mentioned_airports(submission.title + submission.selftext)
+                mentioned_icao_codes = set().union(*[
+                    find_mentioned_icao_codes(submission.title),
+                    find_mentioned_icao_codes(submission.selftext),
+                ])
 
-                if not mentioned_airports:
+                if not mentioned_icao_codes:
                     print("No airports mentioned in submission")
                     continue
 
-                comment_body = make_comment_body(mentioned_airports)
+                comment_body = make_comment_body(mentioned_icao_codes)
                 print("COMMENT BODY:")
                 print(comment_body)
                 print()
@@ -91,7 +97,7 @@ def run() -> None:
                     "subreddit": subreddit_name,
                     "title": submission.title,
                     "created_at": submission.created_utc,
-                    "mentioned_icao_codes": [a["icao"] for a in mentioned_airports],
+                    "mentioned_icao_codes": mentioned_icao_codes,
                 }
 
                 time.sleep(2)
